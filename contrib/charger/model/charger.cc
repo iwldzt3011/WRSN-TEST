@@ -26,7 +26,7 @@ ChargerBase::ChargerBase():
 
 
 double ChargerBase::getChargingEfficiency(double distance){
-    return 0.5;
+    return 0.68;
 }
 void ChargerBase::handle(){
     std::cout << "state : " << state << "\n";
@@ -119,7 +119,13 @@ void ChargerBase::checkHandle(){
 
     auto& nodes = wsngr::RoutingProtocol::GetNodes();
     for(auto& [ip,info] : nodes){
-        if(info.energy <= wsngr::NodeInfo::CHARING_THRESHOLD) chargeQueue.insert(ip);
+        if(info.energy <= wsngr::NodeInfo::CHARING_THRESHOLD){
+            if(!chargeQueue.count(ip)){
+                info.requested_time = Simulator::Now();
+                requested_sensor++;
+                chargeQueue.insert(ip);
+            }
+        }
     }
     if(chargeQueue.size() && state == IDLE && eventTimer.IsExpired()){
         eventTimer.Schedule(Seconds(0.1));

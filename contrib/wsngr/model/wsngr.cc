@@ -54,7 +54,7 @@ void NodeInfo::handleEnergy(int type,double Consumption_coefficient){
   last_update_time = Simulator::Now();
 
   if(type == TX_TYPE){ // Tx
-    consume = RoutingProtocol::Tx_Consume*2*Consumption_coefficient;
+    consume = RoutingProtocol::Tx_Consume*Consumption_coefficient;
   }else if(type == RX_TYPE){ //Rx
     consume = RoutingProtocol::Rx_Consume;
   }else if(type == SENSING_TYPE){
