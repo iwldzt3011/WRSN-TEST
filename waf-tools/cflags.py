@@ -19,7 +19,7 @@ class GccTraits(CompilerTraits):
 	def __init__(self):
 		super(GccTraits, self).__init__()
 		# cumulative list of warnings per level
-		self.warnings_flags = [['-Wall'], ['-Werror'], ['-Wextra']]
+		self.warnings_flags = [['-Wall'], ['-Wextra']]
 
 	def get_warnings_flags(self, level):
 		warnings = []
@@ -54,8 +54,7 @@ class IccTraits(CompilerTraits):
 		super(IccTraits, self).__init__()
 		# cumulative list of warnings per level
 		# icc is _very_ verbose with -Wall, -Werror is barely achievable
-		self.warnings_flags = [[], [], ['-Wall']]
-		
+		self.warnings_flags = [[],[], ['-Wall']]
 	def get_warnings_flags(self, level):
 		warnings = []
 		for l in range(level):
