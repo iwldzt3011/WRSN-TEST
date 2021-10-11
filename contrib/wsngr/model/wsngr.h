@@ -35,8 +35,9 @@ enum NodeState{
 
 struct NodeInfo{
 
-  constexpr static double MAX_ENERGY = 10.8;
-  constexpr static double CHARING_THRESHOLD = 1;
+  constexpr static double MAX_ENERGY = 10800;
+  constexpr static double MIN_ENERGY = 540;
+  constexpr static double CHARING_THRESHOLD = MAX_ENERGY * 0.4;
   constexpr static int RX_TYPE = 0; 
   constexpr static int TX_TYPE = 1; 
   constexpr static int SENSING_TYPE = 2; 
@@ -89,9 +90,9 @@ public:
     return nodes;
   }
 
-  static constexpr double Tx_Consume = 0.01 * 1.5;
+  static constexpr double Tx_Consume = 0.5 * 20;
   static constexpr double Rx_Consume = Tx_Consume * 0.6;
-  static constexpr double Sensing_Consume = 0.01 * 1.4;
+  static constexpr double Sensing_Consume = 4 * 2;
 
   /**
    * \brief Get the type ID.
@@ -170,6 +171,8 @@ public:
   Ipv4Address GetMainAddress (Ipv4Address iface_addr) const;
 
   Ipv4Address GetNextForward();
+  
+  double get_weigth(Ipv4Address ip,double weight);
 
 private:
   Ipv4Address m_mainAddress; //!< the node main address.
