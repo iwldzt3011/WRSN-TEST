@@ -27,6 +27,8 @@ struct ChargerBase{
     constexpr static double MOVING_ENERGY = 0.6;
     constexpr static double MAX_ENERGY = 4000;
     static Time SELF_CHARGING_TIME;
+    static Time FIRST_REQUEST_TIME;
+
 
     Vector position;
     double energy = MAX_ENERGY;
@@ -68,6 +70,10 @@ struct ChargerBase{
 
     void print_statistics();
 };
+//求解最大独立集
+void Maximum_Independent_Sets();
+bool check_MIS(std::vector<Ipv4Address>MIS,Ipv4Address value);
+
 
 // ChargerBase& getChargeBase();
 

@@ -25,6 +25,9 @@
 namespace ns3 {
 namespace wsngr{
 constexpr double ALPHA = 0.01;
+static double Sensor_Average_Distance=sqrt(2)*100;
+static double MC_Average_Move_Time=Sensor_Average_Distance/5;
+static double MC_Chager_Range=5;
 
 enum NodeState{
   CHARGING,WORKING,DEAD
@@ -40,17 +43,20 @@ struct NodeInfo{
 
   constexpr static double ENERGY_RECORD_INTERVEL = 60 * 10;
 
+  int id;
   Ipv4Address ip;
   Vector position;
   double energy = MAX_ENERGY;
   double energy_consume_in_record_intervel = 0;
   Time last_update_time;
   NodeState state;
-  
+  WsngrState m_chagerstate;
+
   Time requested_time;
 
   int deadTimes = 0;
   Time first_dead_time=Seconds(7200);
+  int chagerNeighbors=0;
 
   void handleEnergy(int type,double Consumption_coefficient);
 
@@ -123,6 +129,7 @@ protected:
 private:
 
   WsngrState m_state;  //!< Internal state with all needed data structs.
+  
   Ptr<Ipv4> m_ipv4;   //!< IPv4 object the routing is linked to.
 
 public:

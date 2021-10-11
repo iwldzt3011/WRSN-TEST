@@ -33,8 +33,10 @@ namespace wsngr {
 class WsngrState
 {
   typedef std::vector<Ipv4Address> NeighborSet; //!< Neighbor Set type.
+  //typedef std::vector<Ipv4Address> ChagerNeighborSet;
 protected:
-  NeighborSet m_neighborSet;            
+  NeighborSet m_neighborSet; 
+  //ChagerNeighborSet m_chagerneighborSet;        
 
 public:
   WsngrState ()

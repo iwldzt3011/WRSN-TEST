@@ -38,6 +38,7 @@ namespace wsngr {
 constexpr double COMM_RANGE = 20;
 constexpr double TX_THRESHOLD = 0.01;
 
+
 const auto SENSING_ENERGY_UPDATE_INTERVAL = Seconds(10);
 
 void NodeInfo::handleEnergy(int type,double Consumption_coefficient){
@@ -80,7 +81,7 @@ double NodeInfo::getEnergyRate()const{
 
 std::ostream& operator<<(std::ostream& os,const NodeInfo& node){
 
-  os << "ip : " << node.ip << " energy : " << node.energy << " rate : " << node.getEnergyRate() << " dead times : " << node.deadTimes;
+  os <<"id : "<<node.id <<" ip : " << node.ip << " energy : " << node.energy << " rate : " << node.getEnergyRate() << " dead times : " << node.deadTimes;
 }
 
 std::unordered_map<Ipv4Address, NodeInfo, RoutingProtocol::IpHash> RoutingProtocol::nodes{};
@@ -211,14 +212,25 @@ RoutingProtocol::DoInitialize ()
     {
 
       // std::cout << "ip : " << ip << " " << info.position << "\n";
-      if (ip == m_mainAddress)
+      if (ip == m_mainAddress){
+        //MIS_GRAPH[info.id][nodes[m_mainAddress].id]=MIS_GRAPH[nodes[m_mainAddress].id][info.id]=1;
         continue;
+      }
       double dist =CalculateDistance (info.position, RoutingProtocol::nodes[m_mainAddress].position);
       if (dist <= COMM_RANGE)
         {
           m_state.GetNeighbors ().push_back (ip);
+          if(dist<=MC_Chager_Range){
+            //MIS_GRAPH[info.id][nodes[m_mainAddress].id]=MIS_GRAPH[nodes[m_mainAddress].id][info.id]=1;
+            nodes[m_mainAddress].m_chagerstate.GetNeighbors().push_back(ip);
+            nodes[m_mainAddress].chagerNeighbors++;
+          }
         }
     }
+    for(int i=0;i<nodes[m_mainAddress].m_chagerstate.GetNeighbors().size();i++){
+      std::cout<<m_mainAddress<<"独立集合测试"<<nodes[m_mainAddress].m_chagerstate.GetNeighbors()[i]<<std::endl;
+    }
+    //std::cout<<"独立集合测试"<<std::endl;
   // std::cout << RoutingProtocol::nodes.size()<<"~~~~~~~~~~~~\n";
 
   
