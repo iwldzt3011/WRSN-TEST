@@ -16,6 +16,7 @@ double ChargerBase::energy_for_nodes = 0;
 int ChargerBase::charged_sensor = 0;
 int ChargerBase::requested_sensor = 0;
 double ChargerBase::tot_latency = 0;
+Time ChargerBase::first_request_time = Time::Max();
 
 ChargerBase::ChargerBase():
     eventTimer(Timer::CANCEL_ON_DESTROY),
@@ -40,6 +41,9 @@ void ChargerBase::handle(){
             auto& sink = wsngr::RoutingProtocol::getSink();
 
             auto ip = *chargeQueue.begin();
+            auto q = std::set(chargeQueue.begin(),chargeQueue.end(),ChargerCmp{});
+
+            auto ip = *q.begin();
 
             auto& node = wsngr::RoutingProtocol::nodes[ip];
             double dist = CalculateDistance(node.position,position);
@@ -115,7 +119,7 @@ Time ChargerBase::getMovingTime(double distance){
 }
 
 Time ChargerBase::getChargingTime(double energy){
-    return Seconds((wsngr::NodeInfo::MAX_ENERGY - energy) / CHARGING_RATE * getChargingEfficiency(0));
+    return Seconds((wsngr::NodeInfo::MAX_ENERGY - energy) / getChargingEfficiency(0) / CHARGING_RATE );
 }
 
 void ChargerBase::checkHandle(){
@@ -125,6 +129,8 @@ void ChargerBase::checkHandle(){
         if(info.energy <= wsngr::NodeInfo::CHARING_THRESHOLD){
             if(!chargeQueue.count(ip)){
                 info.requested_time = Simulator::Now();
+                if(ChargerBase::first_request_time == Time::Max()) [[unlikely]]
+                    ChargerBase::first_request_time = info.requested_time;
                 if(FIRST_REQUEST_TIME==Seconds(7200)){
                     FIRST_REQUEST_TIME=info.requested_time;
                 }
@@ -166,9 +172,12 @@ void ChargerBase::print_statistics(){
         << "first request time : " << FIRST_REQUEST_TIME.GetSeconds() << " \n"
         << "energy in moving : " << energy_in_moving << " \n"
         << "nodes receive energy : " << energy_for_nodes << "\n"
+        << "charged sensors: " << charged_sensor << "\n"
+        << "requested sensors: " << requested_sensor << "\n"
         << "energy usage efficiency: " << energy_for_nodes / (energy_for_nodes / getChargingEfficiency(0) + energy_in_moving) << "\n"
         << "survival rate: " << charged_sensor*1.0 / requested_sensor << "\n"
         << "average charging latency: " << tot_latency / charged_sensor << "s\n"
+         << "first request time : " << first_request_time.GetSeconds() << "s\n"
         << "======================";
 }
 
